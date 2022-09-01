@@ -712,3 +712,77 @@ export function sequenceS<F>(F: Apply<F>): (r: Record<string, HKT<F, any>>) => H
     return fr
   }
 }
+
+/**
+ * Like `Apply.sequenceS` but works on one single property instead.
+ *
+ * @example
+ * import * as E from 'fp-ts/Either'
+ * import { sequenceProp } from 'fp-ts/Apply'
+ *
+ * const ado = sequenceProp("a", E.Apply)
+ *
+ * assert.deepStrictEqual(
+ *   ado({
+ *     a: E.right(1),
+ *     b: E.right(true)
+ *     c: 3
+ *   }),
+ *   E.right({ a: 1, b: E.right(true), c: 3 })
+ * )
+ * assert.deepStrictEqual(
+ *   ado({
+ *     a: E.right(1),
+ *     b: E.left(true)
+ *   }),
+ *   E.left({ a: 1, b: E.left(true) })
+ * )
+ *
+ * assert.deepStrictEqual(
+ *  ado({
+ *    a: E.left("error"),
+ *    b: E.right(true)
+ *  }),
+ *  E.left("error")
+ *
+ * @since 2.0.0
+ */
+export function sequenceKey<P extends string, F extends URIS4>(
+  prop: P, F: Apply4<F>
+): <S, R, E, NER extends Record<P, Kind4<F, S, R, E, any>>>(
+  r: NER & Record<P, Kind4<F, S, R, E, any>>
+) => Kind4<F, S, R, E, { [K in keyof NER]: K extends P ? ([NER[K]] extends [Kind4<F, any, any, any, infer A>] ? A : never) : NER[K] }>
+export function sequenceKey<P extends string, F extends URIS3>(
+  prop: P, F: Apply3<F>
+): <R, E, NER extends Record<P, Kind3<F, R, E, any>>>(
+  r: NER & Record<P, Kind3<F, R, E, any>>
+) => Kind3<F, R, E, { [K in keyof NER]: K extends P ? ([NER[K]] extends [Kind3<F, any, any, infer A>] ? A : never) : NER[K] }>
+export function sequenceKey<P extends string, F extends URIS3, E>(
+  prop: P, F: Apply3C<F, E>
+): <R, NER extends Record<P, Kind3<F, R, E, any>>>(
+  r: NER & Record<P, Kind3<F, R, E, any>>
+) => Kind3<F, R, E, { [K in keyof NER]: K extends P ? ([NER[K]] extends [Kind3<F, any, any, infer A>] ? A : never) : NER[K] }>
+export function sequenceKey<P extends string, F extends URIS2>(
+  prop: P, F: Apply2<F>
+): <E, NER extends Record<P, Kind2<F, E, any>>>(
+  r: NER & Record<P, Kind2<F, E, any>>
+) => Kind2<F, E, { [K in keyof NER]: K extends P ? ([NER[K]] extends [Kind2<F, any, infer A>] ? A : never) : NER[K] }>
+export function sequenceKey<P extends string, F extends URIS2, E>(
+  prop: P, F: Apply2C<F, E>
+): <NER extends Record<P, Kind2<F, E, any>>>(
+  r: NER
+) => Kind2<F, E, { [K in keyof NER]: K extends P ? ([NER[K]] extends [Kind2<F, any, infer A>] ? A : never) : NER[K] }>
+export function sequenceKey<P extends string, F extends URIS>(
+  prop: P, F: Apply1<F>
+): <NER extends Record<P, Kind<F, any>>>(
+  r: NER
+) => Kind<F, { [K in keyof NER]: K extends P ? ([NER[K]] extends [Kind<F, infer A>] ? A : never) : NER[K] }>
+export function sequenceKey<P extends string, F>(
+  prop: P, F: Apply<F>
+): <NER extends Record<P, HKT<F, any>>>(
+  r: NER
+) => HKT<F, { [K in keyof NER]: K extends P ? ([NER[K]] extends [HKT<F, infer A>] ? A : never) : NER[K] }>
+
+export function sequenceKey<P extends string, F>(prop: P, F: Apply<F>) {
+  return (obj: Record<P, HKT<F, any>>) => F.map(obj[prop], (value) => ({ ...obj, [prop]: value }))
+}
